@@ -1,0 +1,18 @@
+{
+  "name": "cache",
+  "version": "0.0.0",
+  "description": "redis playground",
+  "main": "redis-operation.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "redis": "^0.12.1"
+  },
+  "dependencies": {
+    "redis": "^0.12.1",
+    "request": "^2.81.0"
+  }
+}
