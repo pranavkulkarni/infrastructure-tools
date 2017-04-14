@@ -20,13 +20,14 @@ var setTrafficRatio = function (trafficRatio) {
 
 };
 
-var addUrl = function (urlListName, urlName) {
-
-    client.rpush([urlListName, urlName], function(err, reply) {
-        if (err) throw err;
-        console.log(urlName + " has been added to the list of " + urlListName);
-    });
-
+var addUrls = function (urlListName, urlNames) {
+    var urlEndPoints = urlNames.split(',');
+    for(var i = 0; i < urlEndPoints.length; i++) {
+        client.rpush([urlListName, urlEndPoints[i]], function(err, reply) {
+            if (err) throw err;
+            console.log(urlEndPoints[i] + " has been added to the list of " + urlListName);
+        });
+    }
 };
 
 var addServer = function (serverListName, serverName) {
@@ -38,12 +39,15 @@ var addServer = function (serverListName, serverName) {
 
 };
 
-var removeUrl = function (urlListName, urlName) {
+var removeUrls = function (urlListName, urlNames) {
 
-    client.lrem(urlListName, 0 , urlName, function(err, reply) {
-        if (err) throw err;
-        console.log(urlName + " has been removed from the list of " + urlListName);
-    });
+    var urlEndPoints = urlNames.split(',');
+    for(var i = 0; i < urlEndPoints.length; i++) {
+        client.lrem(urlListName, 0, urlEndPoints[i], function(err, reply) {
+            if (err) throw err;
+            console.log(urlEndPoints[i] + " has been removed from the list of " + urlListName);
+        });
+    }
 
 };
 
@@ -68,10 +72,10 @@ switch(operation){
         setTrafficRatio(trafficRatio);
         break;
 
-	case addUrl:
+	case addUrls:
         var urlListName = process.argv[3];
-        var urlName = process.argv[4];
-        addUrl(urlListName,urlName);
+        var urlNames = process.argv[4];
+        addUrls(urlListName,urlNames);
         break;
 
 	case addServer:
@@ -80,10 +84,10 @@ switch(operation){
         addUrl(serverListName,serverName);
         break;
 
-    case removeUrl:
+    case removeUrls:
         var urlListName = process.argv[3];
-        var urlName = process.argv[4];
-        removeUrl(urlListName,urlName);
+        var urlNames = process.argv[4];
+        removeUrls(urlListName,urlNames);
         break;
 
         break;
@@ -100,5 +104,5 @@ node redis-operation.js setTrafficRatio 1.0
 node redis-operation.js addServer prodServers 192.168.97.97
 node redis-operation.js removeUrl canUrls 192.168.98.98
 node redis-operation.js removeServer CanServers 192.168.97.97
-node redis-operation.js addUrl ProdUrls 192.168.98.98
+node redis-operation.js addUrl ProdUrls '/api/newFeature/good,/api/newFeature2/good,/api/newFeature3/good'
 */

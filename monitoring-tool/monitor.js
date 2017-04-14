@@ -21,7 +21,7 @@ setInterval(function() {
                                     var url = "http://" + prodServers[i] + prodUrls[j];
                                     request(url, function(er, x, y) {
                                         if(er) throw er;
-                                        if(x.statusCode === 500 || x.statusCode === 404) {
+                                        if(x.statusCode === 500) {
                                             errCount +=1;
                                         }
                                     });
