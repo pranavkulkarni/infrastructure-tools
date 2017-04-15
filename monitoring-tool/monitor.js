@@ -1,7 +1,7 @@
 var request = require("request");
 var redis = require('redis');
 var client = redis.createClient(6379, '127.0.0.1', {});
-
+var apiPortNo = 3002;
 
 setInterval(function() {
 
@@ -18,7 +18,7 @@ setInterval(function() {
                             client.lrange("prodUrls", 0, -1, function(e, prodUrls) {
                                 if(e) throw e
                                 for(var j = 0; j < prodUrls.length; j++) {
-                                    var url = "http://" + prodServers[i] + prodUrls[j];
+                                    var url = "http://" + prodServers[i] + ":" + apiPortNo + prodUrls[j];
                                     request(url, function(er, x, y) {
                                         if(er) throw er;
                                         if(x.statusCode === 500) {
@@ -68,7 +68,7 @@ setInterval(function() {
                             client.lrange("canUrls", 0, -1, function(e, canUrls) {
                                 if(e) throw e;
                                 for(var j = 0; j < canUrls.length; j++) {
-                                    var url = "http://" + canServers[i] + canUrls[j];
+                                    var url = "http://" + canServers[i] + ":" + apiPortNo + canUrls[j];
                                     request(url, function(er, x, y) {
                                         if(er) throw er;
                                         if(x.statusCode === 500) {

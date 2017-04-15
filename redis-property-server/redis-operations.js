@@ -102,7 +102,7 @@ switch(operation){
 node redis-operation.js setFeatureFlag feature1 false/true
 node redis-operation.js setTrafficRatio 1.0
 node redis-operation.js addServer prodServers 192.168.97.97
-node redis-operation.js removeUrl canUrls 192.168.98.98
-node redis-operation.js removeServer CanServers 192.168.97.97
-node redis-operation.js addUrl ProdUrls '/api/newFeature/good,/api/newFeature2/good,/api/newFeature3/good'
+node redis-operation.js removeUrls canUrls /api/newFeature/bad
+node redis-operation.js removeServer canServers 192.168.97.97
+node redis-operation.js addUrls prodUrls /api/newFeature/good,/api/newFeature2/good,/api/newFeature3/good
 */
