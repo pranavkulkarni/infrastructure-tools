@@ -7,6 +7,7 @@ var setFeatureFlag = function (featureFlagName,featureFlagStatus) {
     client.set(featureFlagName, featureFlagStatus, function(err, reply) {
         if (err) throw err;
         console.log("Feature " + featureFlagName +  " has been set to " + featureFlagStatus);
+        process.exit(0);
     });
 
 };
@@ -16,6 +17,7 @@ var setTrafficRatio = function (trafficRatio) {
     client.set("trafficRatio", trafficRatio, function(err, reply) {
         if (err) throw err;
         console.log("trafficRatio has been set to " + trafficRatio);
+        process.exit(0);
     });
 
 };
@@ -28,6 +30,7 @@ var addUrls = function (urlListName, urlNames) {
             console.log(urlEndPoints[i] + " has been added to the list of " + urlListName);
         });
     }
+    process.exit(0);
 };
 
 var addServer = function (serverListName, serverName) {
@@ -36,7 +39,7 @@ var addServer = function (serverListName, serverName) {
         if (err) throw err;
         console.log(serverListName + " has been added to the list of " + serverName);
     });
-
+    process.exit(0);
 };
 
 var removeUrls = function (urlListName, urlNames) {
@@ -48,7 +51,7 @@ var removeUrls = function (urlListName, urlNames) {
             console.log(urlEndPoints[i] + " has been removed from the list of " + urlListName);
         });
     }
-
+    process.exit(0);
 };
 
 var removeServer = function (serverListName, serverName) {
@@ -57,42 +60,41 @@ var removeServer = function (serverListName, serverName) {
         if (err) throw err;
         console.log(serverName + " has been removed from the list of " + serverListName);
     });
+    process.exit(0);
 
 };
 
 switch(operation){
-	case setFeatureFlag:
+	case 'setFeatureFlag':
 		var featureFlagName = process.argv[3];
         var featureFlagStatus = process.argv[4];
         setFeatureFlag(featureFlagName,featureFlagStatus);
 		break;
 
-	case setTrafficRatio:
+	case 'setTrafficRatio':
         var trafficRatio = Number(process.argv[3]);
         setTrafficRatio(trafficRatio);
         break;
 
-	case addUrls:
+	case 'addUrls':
         var urlListName = process.argv[3];
         var urlNames = process.argv[4];
         addUrls(urlListName,urlNames);
         break;
 
-	case addServer:
+	case 'addServer':
         var serverListName = process.argv[3];
         var serverName = process.argv[4];
         addUrl(serverListName,serverName);
         break;
 
-    case removeUrls:
+    case 'removeUrls':
         var urlListName = process.argv[3];
         var urlNames = process.argv[4];
         removeUrls(urlListName,urlNames);
         break;
 
-        break;
-
-    case removeServer:
+    case 'removeServer':
         var serverListName = process.argv[3];
         var serverName = process.argv[4];
         removeServer(serverListName,serverName);
