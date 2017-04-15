@@ -12,14 +12,15 @@ setInterval(function() {
 
                     client.lrange("prodServers", 0, -1, function(err, prodServers) {
                         if(err) throw err;
-
-                        for(var i = 0; i < prodServers.length; i++) {
+                        var i = 0;
+                        while(i < prodServers.length) {
                             var errCount =0;
                             client.lrange("prodUrls", 0, -1, function(e, prodUrls) {
                                 if(e) throw e
                                 for(var j = 0; j < prodUrls.length; j++) {
                                     //var url = "http://" + prodServers[i] + ":" + apiPortNo + prodUrls[j];
                                     var url = "http://" + prodServers[i] + prodUrls[j];
+                                    console.log("Monitoing -- " + url);
                                     request(url, function(er, x, y) {
                                         if(er) throw er;
                                         if(x.statusCode === 500) {
@@ -38,6 +39,8 @@ setInterval(function() {
                                         })
                                     }
                                 })
+
+                                i++;
 
                             });
                         }
@@ -65,12 +68,14 @@ setInterval(function() {
 
                     client.lrange("canServers", 0, -1, function(err, canServers) {
                         if(err) throw err;
-                        for(var i = 0; i < canServers.length; i++) {
+                        var i = 0;
+                        while(i < canServers.length) {
                             client.lrange("canUrls", 0, -1, function(e, canUrls) {
                                 if(e) throw e;
                                 for(var j = 0; j < canUrls.length; j++) {
                                     //var url = "http://" + canServers[i] + ":" + apiPortNo + canUrls[j];
                                     var url = "http://" + canServers[i] + canUrls[j];
+                                    console.log("Monitoing canary-- " + url);
                                     request(url, function(er, x, y) {
                                         if(er) throw er;
                                         if(x.statusCode === 500) {
@@ -81,6 +86,7 @@ setInterval(function() {
                                         }
                                     });
                                 }
+                                i++;
                             });
                         }
                     });

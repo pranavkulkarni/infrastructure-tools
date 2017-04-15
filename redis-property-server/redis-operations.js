@@ -24,13 +24,18 @@ var setTrafficRatio = function (trafficRatio) {
 
 var addUrls = function (urlListName, urlNames) {
     var urlEndPoints = urlNames.split(',');
+    var j = 0; // to overcome async black hole!
     for(var i = 0; i < urlEndPoints.length; i++) {
         client.rpush([urlListName, urlEndPoints[i]], function(err, reply) {
             if (err) throw err;
-            console.log(urlEndPoints[i] + " has been added to the list of " + urlListName);
+            console.log(urlEndPoints[j] + " has been added to the list of " + urlListName);
+            j++;
+            if(j === urlEndPoints.length) {
+                process.exit(0);
+            }
         });
     }
-    process.exit(0);
+
 };
 
 var addServer = function (serverListName, serverName) {
@@ -38,20 +43,25 @@ var addServer = function (serverListName, serverName) {
     client.rpush([serverListName, serverName], function(err, reply) {
         if (err) throw err;
         console.log(serverListName + " has been added to the list of " + serverName);
+        process.exit(0);
     });
-    process.exit(0);
 };
 
 var removeUrls = function (urlListName, urlNames) {
 
     var urlEndPoints = urlNames.split(',');
+    var j = 0; // to overcome async black hole!
     for(var i = 0; i < urlEndPoints.length; i++) {
         client.lrem(urlListName, 0, urlEndPoints[i], function(err, reply) {
             if (err) throw err;
-            console.log(urlEndPoints[i] + " has been removed from the list of " + urlListName);
+            console.log(urlEndPoints[j] + " has been removed from the list of " + urlListName);
+            j++;
+            if(j === urlEndPoints.length) {
+                process.exit(0);
+            }
         });
     }
-    process.exit(0);
+
 };
 
 var removeServer = function (serverListName, serverName) {
@@ -59,8 +69,9 @@ var removeServer = function (serverListName, serverName) {
     client.lrem(serverListName, 0 , serverName, function(err, reply) {
         if (err) throw err;
         console.log(serverName + " has been removed from the list of " + serverListName);
+        process.exit(0);
     });
-    process.exit(0);
+
 
 };
 
@@ -85,7 +96,7 @@ switch(operation){
 	case 'addServer':
         var serverListName = process.argv[3];
         var serverName = process.argv[4];
-        addUrl(serverListName,serverName);
+        addServer(serverListName,serverName);
         break;
 
     case 'removeUrls':
