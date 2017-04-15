@@ -8,55 +8,48 @@ var client = redis.createClient(6379, '127.0.0.1', {}); //connects to the global
 var http = require('http')
 var portNo = process.argv[2]
 
-var listOfProdServers;
-client.get("prodServers", function(errr, listOfServers) {
-    if(err) throw err;
-    listOfProdServers = listOfServers;
-});
-
-var listOfCanaryServers;
-client.get("canServers", function(errr, listOfServers) {
-    if(err) throw err;
-    listOfCanaryServers = listOfServers;
-});
-
 var trafficRatio;
 client.get("trafficRatio", function(errr, tr) {
-    if(err) throw err;
+    if(errr) throw errr;
     trafficRatio = Number(tr);
 });
 
-var proxy = httpProxy.createProxyServer({});
+var proxy = httpProxy.createProxyServer({ headers: {connection: 'keep-alive'}, agent: null});
 console.log('Load Balancer listening at port 8080');
 
 
 http.createServer(function(req, res) {
-    var targetInstance;
+    console.log("Req received" + req);
     if(trafficRatio === 1.0) {
         // proxy only to prod servers in round robin fashion
-        client.rpoplpush(listOfProdServers, listOfProdServers, function(err, targetServer) {
+        client.rpoplpush("prodServers", "prodServers", function(err, targetServer) {
             if(err) throw err;
-            targetInstance = targetServer;
+            console.log("1Proxying to server: http://" + targetServer);
+            proxy.web(req, res, { target: 'http://' + targetServer });
         });
     } else {
         if(Math.random() > trafficRatio ) {
             // proxy to canary server
-            client.rpoplpush(listOfCanaryServers, listOfCanaryServers, function(err, targetServer) {
+            client.rpoplpush("canServers", "canServers", function(err, targetServer) {
                 if(err) throw err;
-                targetInstance = targetServer;
+                console.log("2Proxying to server: http://" + targetServer);
+                proxy.web(req, res, { target: 'http://' + targetServer });
             });
         } else {
             // proxy only to prod servers in round robin fashion
-            client.rpoplpush(listOfProdServers, listOfProdServers, function(err, targetServer) {
+            client.rpoplpush("prodServers", "prodServers", function(err, targetServer) {
                 if(err) throw err;
-                targetInstance = targetServer;
+                console.log("3Proxying to server: http://" + targetServer);
+                proxy.web(req, res, { target: 'http://' + targetServer });
             });
         }
     }
 
-    proxy.web(req, res, { target: 'http://' + targetInstance });
+
 
 }).listen(portNo || 8080);
+
+http.request
 
 
 
