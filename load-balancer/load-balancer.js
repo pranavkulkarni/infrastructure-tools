@@ -14,17 +14,16 @@ client.get("trafficRatio", function(errr, tr) {
     trafficRatio = Number(tr);
 });
 
-var proxy = httpProxy.createProxyServer({ headers: {connection: 'keep-alive'}, agent: null});
-console.log('Load Balancer listening at port 8080');
-
+var proxy = httpProxy.createProxyServer({});
 
 http.createServer(function(req, res) {
-    console.log("Req received" + req);
+    console.log("\nReq received from client.");
+
     if(trafficRatio === 1.0) {
         // proxy only to prod servers in round robin fashion
         client.rpoplpush("prodServers", "prodServers", function(err, targetServer) {
             if(err) throw err;
-            console.log("1Proxying to server: http://" + targetServer);
+            console.log("Proxying to server: http://" + targetServer );
             proxy.web(req, res, { target: 'http://' + targetServer });
         });
     } else {
@@ -32,25 +31,24 @@ http.createServer(function(req, res) {
             // proxy to canary server
             client.rpoplpush("canServers", "canServers", function(err, targetServer) {
                 if(err) throw err;
-                console.log("2Proxying to server: http://" + targetServer);
+                console.log("Proxying to server: http://" + targetServer );
                 proxy.web(req, res, { target: 'http://' + targetServer });
             });
         } else {
             // proxy only to prod servers in round robin fashion
             client.rpoplpush("prodServers", "prodServers", function(err, targetServer) {
                 if(err) throw err;
-                console.log("3Proxying to server: http://" + targetServer);
+                console.log("Proxying to server: http://" + targetServer );
                 proxy.web(req, res, { target: 'http://' + targetServer });
             });
         }
     }
 
-
+    console.log("Response sent to client.");
 
 }).listen(portNo || 8080);
 
-http.request
-
+console.log('Load Balancer running at port 8080');
 
 
 
