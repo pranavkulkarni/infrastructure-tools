@@ -3,6 +3,7 @@ var redis = require('redis');
 var client = redis.createClient(6379, '127.0.0.1', {});
 var apiPortNo = 3002;
 
+/*
 setInterval(function() {
 
     client.exists("prodServers", function(exception, existsValue) {
@@ -56,9 +57,10 @@ setInterval(function() {
 
 
 }, 10000);
+*/
 
 
-
+/*
 setInterval(function() {
 
     client.exists("canServers", function(exception, existsValue) {
@@ -97,3 +99,5 @@ setInterval(function() {
     })
 
 }, 15000);
+
+*/
